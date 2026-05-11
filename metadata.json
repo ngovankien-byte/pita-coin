@@ -1,0 +1,5 @@
+{
+  "name": "Pita/coins",
+  "description": "A responsive TikTok-style coin recharge application with VietQR and Zalo integration.",
+  "requestFramePermissions": []
+}

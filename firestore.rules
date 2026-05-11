@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId} (UID from Firebase Auth)
+    // Fields:
+    //   - tiktokId: string (required, 1-50 chars) - The user's TikTok ID
+    //   - balance: number (required, >= 0) - Current coin balance
+    //   - createdAt: timestamp (required) - When the user profile was created
+    //   - updatedAt: timestamp (required) - When the user profile was last updated
+    //
+    // Collection: transactions
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required, matches auth.uid) - The UID of the user who made the purchase
+    //   - coins: number (required, > 0) - Number of coins purchased
+    //   - price: number (required, > 0) - Total price paid in VND
+    //   - status: string (required, enum: ['pending', 'completed', 'failed']) - Status of the transaction
+    //   - createdAt: timestamp (required) - When the transaction occurred
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null || (request.resource != null && request.resource.data.userId != null) || (resource != null && resource.data.userId != null);
+    }
+
+    function isOwner(userId) {
+      return (request.auth != null && request.auth.uid == userId) || 
+             (request.auth == null && userId != null); // Fallback for Local ID
+    }
+
+    function isDocOwner() {
+      return (request.auth != null && request.auth.uid == resource.data.userId) ||
+             (request.auth == null && resource.data.userId != null); // Fallback for Local ID
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "ngokien.securitas@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidUser(data) {
+      return data.tiktokId is string && data.tiktokId.size() > 0 && data.tiktokId.size() <= 50 &&
+             data.balance is number && data.balance >= 0 &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidTransaction(data) {
+      return (request.auth != null ? data.userId == request.auth.uid : data.userId != null) &&
+             data.coins is number && data.coins > 0 &&
+             data.price is number && data.price > 0 &&
+             data.status in ['pending', 'completed', 'failed'] &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+    }
+
+    match /transactions/{transactionId} {
+      allow read: if true;
+      allow create: if request.resource.data.userId != null;
+      allow update: if resource.data.userId != null;
+      allow delete: if isAdmin();
+    }
+  }
+}

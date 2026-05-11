@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pita/coins - Nạp Xu TikTok Giá Rẻ, Uy Tín</title>
+    <script>
+      (function() {
+        try {
+          var _fetch = window.fetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() { return _fetch; },
+            set: function(v) { 
+              console.warn('Attempted fetch overwrite at:', new Error().stack);
+            },
+            configurable: true
+          });
+        } catch (e) {
+          console.warn('Could not redefine fetch:', e);
+        }
+      })();
+    </script>
+    <meta name="description" content="Pita/coins - Dịch vụ nạp xu TikTok giá rẻ, uy tín, hỗ trợ nạp qua VietQR và Zalo. Nạp xu nhanh chóng, an toàn." />
+    <meta name="keywords" content="Pita/coins, nạp xu tiktok, tiktok coins, nạp xu giá rẻ, nạp xu pita" />
+    <meta property="og:title" content="Pita/coins - Nạp Xu TikTok Giá Rẻ" />
+    <meta property="og:description" content="Dịch vụ nạp xu TikTok uy tín, hỗ trợ nạp qua VietQR và Zalo." />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-tiktok-pink: #fe2c55;
+  --color-tiktok-cyan: #25f4ee;
+  --color-tiktok-black: #121212;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-tiktok-black font-sans;
+  }
+  
+  /* Hide number input spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
