@@ -99,7 +99,14 @@
                     setTiktokId(loginInput);
                     localStorage.setItem('pita_tiktok_id', loginInput);
                     setIsLoginModalOpen(false);
+                    // Mock: In a real app we would check balance for this ID
                 }
+            };
+
+            const handleLogout = () => {
+                setTiktokId("");
+                setBalance(0);
+                localStorage.removeItem('pita_tiktok_id');
             };
 
             const handleRecharge = () => {
@@ -119,11 +126,20 @@
                 <div className="min-h-screen transition-all duration-500">
                     {/* Header */}
                     <header className="h-[60px] bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-10 sticky top-0 z-40">
-                        <div className="flex items-center gap-2">
-                            <div className="bg-black p-1.5 rounded-lg">
-                                <i data-lucide="coins" class="text-white w-5 h-5"></i>
+                        <div 
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={() => window.location.reload()}
+                        >
+                            <img 
+                                src="logo.png" 
+                                alt="Logo" 
+                                className="w-9 h-9 rounded-full border border-gray-100 shadow-sm"
+                                onError={(e) => { e.target.src = "https://sf16-scmcdn-va.ibytedtos.com/goofy/tiktok/web/node/_next/static/images/logo-dark-e95da587b6de167aaed06c9da23175f3.svg" }}
+                            />
+                            <div className="flex flex-col">
+                                <span className="font-black text-lg tracking-tighter text-[#161823] leading-none">Pita Coins</span>
+                                <span className="text-[8px] font-black text-[#fe2c55] uppercase tracking-widest">Luxury Service</span>
                             </div>
-                            <span className="font-black text-xl tracking-tighter text-[#161823]">Pita/Coins</span>
                         </div>
                         {tiktokId ? (
                              <div 
@@ -136,13 +152,13 @@
                                 <span class="text-sm font-bold truncate max-w-[100px]">{tiktokId}</span>
                              </div>
                         ) : (
-                            <button onClick={() => setIsLoginModalOpen(true)} class="bg-[#fe2c55] text-white px-5 py-2 rounded-md font-bold text-sm">Log in</button>
+                            <button onClick={() => setIsLoginModalOpen(true)} class="bg-[#fe2c55] text-white px-5 py-2 rounded-md font-bold text-sm">Đăng nhập</button>
                         )}
                     </header>
 
                     <main className="max-w-4xl mx-auto p-4 md:p-10">
                         <section className="bg-white rounded-2xl shadow-sm p-6 md:p-10 border border-gray-50">
-                            <h1 className="text-2xl md:text-3xl font-black mb-8">Get Coins</h1>
+                            <h1 className="text-2xl md:text-3xl font-black mb-8">Nạp Xu TikTok</h1>
                             
                             {/* User Info */}
                             <div className="bg-[#f1f1f2] rounded-xl p-4 flex items-center justify-between mb-8">
@@ -151,13 +167,20 @@
                                         <i data-lucide="user" class="text-gray-400 w-6 h-6"></i>
                                     </div>
                                     <div>
-                                        <p className="font-black text-lg">{tiktokId || "GUEST MODE"}</p>
-                                        <p className="text-xs text-[#face15] font-bold tracking-wider uppercase">Balance: {balance} coins</p>
+                                        <p className="font-black text-lg">{tiktokId || "CHẾ ĐỘ KHÁCH"}</p>
+                                        <p className="text-xs text-[#face15] font-bold tracking-wider uppercase">Số dư: {balance} xu</p>
                                     </div>
                                 </div>
-                                <button className="text-[#fe2c55] font-bold text-sm hover:underline" onClick={() => setIsLoginModalOpen(true)}>
-                                    {tiktokId ? "Switch ID" : "Set ID"}
-                                </button>
+                                <div className="flex flex-col items-end gap-2">
+                                    <button className="text-[#fe2c55] font-bold text-sm hover:underline" onClick={() => setIsLoginModalOpen(true)}>
+                                        {tiktokId ? "Đổi ID" : "Đặt ID"}
+                                    </button>
+                                    {tiktokId && (
+                                        <button className="text-gray-400 font-bold text-[10px] hover:text-red-500 uppercase tracking-tighter" onClick={handleLogout}>
+                                            Đăng xuất
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                             <p className="text-xs font-bold mb-6 flex items-center gap-2">
@@ -184,18 +207,40 @@
                                 ))}
                                 <div 
                                     onClick={() => { setIsCustom(true); setSelectedPackage(null); }}
-                                    className={`p-4 rounded-xl text-center border-2 transition-all cursor-pointer ${isCustom ? 'border-[#fe2c55] bg-white shadow-lg' : 'border-transparent bg-[#f1f1f2] hover:bg-gray-200'}`}
+                                    className={`p-4 rounded-xl text-center border-2 transition-all cursor-pointer flex flex-col items-center justify-center min-h-[100px] ${isCustom ? 'border-[#fe2c55] bg-[#fff0f3]' : 'border-transparent bg-[#f1f1f2] hover:bg-gray-200'}`}
                                 >
-                                    {isCustom ? (
-                                        <input 
-                                            type="number" 
-                                            value={customCoins} 
-                                            onChange={(e) => setCustomCoins(e.target.value)}
-                                            placeholder="Xu"
-                                            className="w-full bg-transparent border-b-2 border-[#fe2c55] focus:outline-none text-center font-black text-lg appearance-none"
-                                        />
+                                    {!isCustom ? (
+                                        <div className="text-center">
+                                            <div className="flex items-center gap-2 mb-1 justify-center">
+                                                <div className="w-6 h-6 bg-[#face15] rounded-full flex items-center justify-center shadow-sm border border-white">
+                                                    <span className="text-[10px] font-bold text-white">d</span>
+                                                </div>
+                                                <span className="font-black text-xl text-[#161823]">Tùy chỉnh</span>
+                                            </div>
+                                            <div className="text-[#8a8b91] text-xs font-bold">Hỗ trợ số lượng lớn</div>
+                                        </div>
                                     ) : (
-                                        <span className="font-black text-lg text-gray-400">Custom</span>
+                                        <div className="w-full flex flex-col items-center">
+                                            <div className="flex items-center gap-3 mb-2 justify-center w-full px-2">
+                                                <div className="w-6 h-6 bg-[#face15] rounded-full flex items-center justify-center shrink-0 shadow-sm border border-white">
+                                                    <span className="text-[10px] font-bold text-white">d</span>
+                                                </div>
+                                                <div className="flex-1 max-w-[120px] border-b-2 border-black pb-1">
+                                                    <input 
+                                                        autoFocus
+                                                        type="number" 
+                                                        value={customCoins} 
+                                                        onChange={(e) => setCustomCoins(e.target.value)}
+                                                        className="w-full bg-transparent border-none focus:outline-none text-center font-black text-xl appearance-none shadow-none focus:ring-0 outline-none"
+                                                        placeholder=""
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="text-[#fe2c55] text-xs font-bold flex items-center gap-1.5 mt-1">
+                                                <div className="w-4 h-4 bg-[#fe2c55] rounded-full flex items-center justify-center text-white text-[10px]">×</div>
+                                                <span>Tối thiểu: 30</span>
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             </div>
@@ -222,11 +267,11 @@
                         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
                             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsLoginModalOpen(false)}></div>
                             <div className="relative bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl">
-                                <h3 className="text-2xl font-black mb-6 text-center">TikTok Login</h3>
+                                <h3 className="text-2xl font-black mb-6 text-center">Đăng nhập TikTok</h3>
                                 <input 
                                     type="text" 
                                     value={loginInput} 
-                                    onChange={(e) => setLoginInput(e.target.value)}
+                                    onChange={(e) => setLoginInput(e.target.value.replace(/[^a-zA-Z0-9._]/g, ''))}
                                     placeholder="@username"
                                     className="w-full p-4 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-[#fe2c55] mb-4 font-bold transition-all outline-none"
                                 />
@@ -266,7 +311,7 @@
                                     <h3 className="text-2xl font-black">Thanh toán</h3>
                                     <button onClick={() => setShowPayment(false)}><i data-lucide="x" class="w-6 h-6"></i></button>
                                 </div>
-                                <div class="overflow-y-auto scrollbar-hide text-center">
+                                    <div class="overflow-y-auto scrollbar-hide text-center">
                                     <div class="mb-6 flex justify-center gap-4 bg-gray-50 p-4 rounded-xl font-black text-sm">
                                         <div class="text-[#face15]">{finalCoins.toLocaleString()} Xu</div>
                                         <div class="text-gray-300">|</div>
@@ -274,17 +319,17 @@
                                     </div>
                                     
                                     <div class="flex flex-col items-center gap-3 mb-6">
-                                        <div class="bg-red-50 text-[#fe2c55] px-4 py-1 rounded-full text-sm font-black flex items-center gap-2">
-                                            <i data-lucide="clock" class="w-4 h-4"></i>
-                                            {formatTime(countdown)}
+                                        <div class="bg-red-50 text-[#fe2c55] px-4 py-1 rounded-full text-sm font-black flex items-center gap-2 text-center">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            Nội dung: NAP XU {tiktokId} {finalCoins}
                                         </div>
                                         <div class="p-3 border-2 border-gray-100 rounded-3xl inline-block bg-white shadow-inner">
                                             <img 
-                                                src={`https://img.vietqr.io/image/${BANK_CONFIG.bankId}-${BANK_CONFIG.accountNumber}-compact2.png?amount=${finalPrice}&addInfo=NAP%20XU%20${tiktokId}&accountName=PitaCoins`}
+                                                src={`https://img.vietqr.io/image/${BANK_CONFIG.bankId}-${BANK_CONFIG.accountNumber}-compact2.png?amount=${finalPrice}&addInfo=NAP%20XU%20${tiktokId}%20${finalCoins}&accountName=PitaCoins`}
                                                 class="w-56 h-56 object-contain"
                                             />
                                         </div>
-                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">Nội dung: NAP XU {tiktokId}</p>
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">Dùng App Ngân hàng quét mã để thanh toán</p>
                                     </div>
 
                                     <div class="p-4 bg-yellow-50 text-yellow-800 text-xs font-bold rounded-xl mb-6">
